@@ -469,7 +469,15 @@ class I18NTool:
         """
         Returns the last release tag, e.g. 1.5.0.
         """
-        tags = subprocess.check_output(["git", "tag"]).decode("utf-8").splitlines()
+        try:
+            tags = subprocess.check_output(["git", "tag"]).decode("utf-8").splitlines()
+        except subprocess.CalledProcessError as e:
+            logging.error(
+                "Could not determine last release tag in directory %s. Git output: %s",
+                os.getcwd(),
+                e.output
+            )
+            raise
         release_tags = sorted([t.strip() for t in tags if self.release_tag_re.match(t)])
         if not release_tags:
             raise ValueError("Could not find a release tag!")
