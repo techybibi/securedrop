@@ -470,7 +470,10 @@ class I18NTool:
         Returns the last release tag, e.g. 1.5.0.
         """
         try:
-            tags = subprocess.check_output(["git", "tag"]).decode("utf-8").splitlines()
+            olddir = os.getcwd()
+            os.chdir(abspath(join(dirname(realpath(__file__)))))
+            tags = subprocess.check_output(["git", "tag", "--list"]).decode("utf-8").splitlines()
+            os.chdir(olddir)
         except subprocess.CalledProcessError as e:
             logging.error(
                 "Could not determine last release tag in directory %s. Git output: %s",
